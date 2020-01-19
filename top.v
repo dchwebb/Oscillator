@@ -1,23 +1,32 @@
 `timescale 1ns / 1ns
 
-module top(spi_cs, spi_data, spi_clock, rstn);
+module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock, rstn);
 
-	wire top_cs;
-	output wire spi_cs;
-	output wire spi_data;
-	output wire spi_clock;
 	input wire rstn;       // from SW1 pushbutton
 	wire rst;
 	assign rst = ~rstn;
 
-	parameter SENDINTERVAL = 23'd3624;
-
+	// DAC settings
+	output wire dac_spi_cs;
+	output wire dac_spi_data;
+	output wire dac_spi_clock;
 	wire dac_sending;
 	reg [23:0] dac_data;
+	
+	// ADC settings
+	input wire adc_spi_clock;
+	input wire adc_spi_data;
+	wire [15:0] adc_data;
+	wire adc_data_received;
+	
+	// Top timing settings
 	reg send;
-	reg [15:0] counter = 16'h00;
 	reg [23:0] send_counter = 23'h00;
+	reg [15:0] counter = 16'h00;
 	reg [1:0] state;
+
+	parameter SENDINTERVAL = 23'd3624;
+
 
 	parameter state_waiting	= 2'b00;
 	parameter state_send		= 2'b01;
@@ -27,8 +36,12 @@ module top(spi_cs, spi_data, spi_clock, rstn);
 	wire fpga_clock;
 	OSCH #(.NOM_FREQ("133.00")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
 
+	// Initialise ADC SPI input microcontroller
+	SPISlave dut(.clock(fpga_clock), .reset(rst), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));
+
+
 	// initialise DAC SPI (Maxim5134)
-	DacSPI dac(.clock_in(fpga_clock), .reset(rst), .data_in(dac_data), .send(send), .spi_cs_out(spi_cs), .spi_clock_out(spi_clock), .spi_data_out(spi_data));
+	DacSPI dac(.clock_in(fpga_clock), .reset(rst), .data_in(dac_data), .send(send), .spi_cs_out(dac_spi_cs), .spi_clock_out(dac_spi_clock), .spi_data_out(dac_spi_data));
 
 	parameter SEND_CHANNEL_A = 8'b00110001;		// Write to DAC Channel A
 	initial begin
@@ -46,6 +59,12 @@ module top(spi_cs, spi_data, spi_clock, rstn);
 			send_counter <= 1'b0;
 		end
 		else begin
+			// process incoming ADC data
+			if (adc_data_received) begin
+				dac_data <= {SEND_CHANNEL_A, adc_data};
+			end
+			
+			// send DAC data out
 			case (state)
 				state_waiting:
 					begin
@@ -57,7 +76,7 @@ module top(spi_cs, spi_data, spi_clock, rstn);
 					end
 				state_send:
 					begin
-						dac_data <= {SEND_CHANNEL_A, counter};
+						//dac_data <= {SEND_CHANNEL_A, counter};
 						send <= 1'b1;
 						state <= state_sent;
 					end

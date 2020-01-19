@@ -1,8 +1,8 @@
-module SPISlave (clock, reset, SPIClk, SPIData, data_out, data_received);
+module SPISlave (clock, reset, spi_clock_in, spi_data_in, data_out, data_received);
 	input wire clock;
 	input wire reset;
-	input wire SPIClk;
-	input wire SPIData;
+	input wire spi_clock_in;
+	input wire spi_data_in;
 	output reg [15:0] data_out;
 	output reg data_received;
 
@@ -33,7 +33,7 @@ module SPISlave (clock, reset, SPIClk, SPIData, data_out, data_received);
 		else begin
 			case (SPISlaveState)
 				state_waiting:
-					if (SPIClk) begin
+					if (spi_clock_in) begin
 						SPISlaveState <= state_receiving;
 						receive_bit <= 0;
 						clk_state <= 1'b0;
@@ -41,25 +41,25 @@ module SPISlave (clock, reset, SPIClk, SPIData, data_out, data_received);
 					end
 
 				state_receiving:
-					if (clk_state == 1'b0 && SPIClk == 1'b1) begin		// SPI clock transitioning low to high ie halfway through clock cycle
+					if (clk_state == 1'b0 && spi_clock_in == 1'b1) begin		// SPI clock transitioning low to high ie halfway through clock cycle
 						if (receive_bit == 15)
 							SPISlaveState <= state_received;
-						data_out[receive_bit] <= SPIData;
+						data_out[receive_bit] <= spi_data_in;
 						receive_bit <= receive_bit + 1'b1;
 						clk_state <= 1'b1;
 						idle_count <= 15'b0;
 					end
-					else if (clk_state == 1'b1 && SPIClk == 1'b0) begin
+					else if (clk_state == 1'b1 && spi_clock_in == 1'b0) begin
 						clk_state <= 1'b0;
 						idle_count <= 15'b0;
 					end
-					else if(clk_state == SPIClk) begin						// Abort if SPI clock gets stuck in one state before transfer completed
+					else if(clk_state == spi_clock_in) begin						// Abort if SPI clock gets stuck in one state before transfer completed
 						if (idle_count > IDLETIME)
 							SPISlaveState <= state_waiting;
 						idle_count <= idle_count + 1'b1;
 					end
 				state_received:
-					if (SPIClk == 1'b0) begin
+					if (spi_clock_in == 1'b0) begin
 						data_received = 1'b1;
 						SPISlaveState <= state_waiting;
 					end
