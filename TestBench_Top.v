@@ -30,10 +30,12 @@ module TestBench_Top;
 		begin
 			for (i = 0; i < 16; i = i + 1) begin
 				#375
-				spi_clock_in = 1'b0;
-				spi_data_in = packet[i];
+				spi_clock_in <= 1'b0;
+				spi_data_in <= packet[i];
 				#375
-				spi_clock_in = 1'b1;
+				spi_clock_in <= 1'b1;
+				$display("Showing %d value\n", i);
+
 			end
 			#375
 			spi_clock_in = 1'b0;
@@ -47,8 +49,8 @@ module TestBench_Top;
 		begin
 			for (i = 0; i < 15; i = i + 1) begin
 				#375
-				spi_clock_in = 1'b0;
-				spi_data_in = packet[i];
+				spi_clock_in <= 1'b0;
+				spi_data_in <= packet[i];
 				#375
 				spi_clock_in = 1'b1;
 			end
@@ -60,20 +62,22 @@ module TestBench_Top;
 
 	initial begin
 		data_packet[0] = {16'b10010110_10101010};
-		data_packet[1] = {16'b10101010_11001100};	//0xaacc
+		data_packet[1] = {16'b01010101_00110011};	//0xaacc
 		data_packet[2] = {16'b00010110_01010101};
+
+		$monitor("Starting simulation display\n");
 
 		reset = 1'b1;
 		spi_clock_in = 1'b0;
 		spi_data_in = 1'b0;
 		#20
 		reset = 1'b0;
-		#10
+		#100
 
 
 
-		send_badSPI(data_packet[0]);
-		#10000
+		//send_badSPI(data_packet[0]);
+//		#10000
 		send_SPI(data_packet[1]);
 		#100000
 		//send_SPI(data_packet[2]);

@@ -28,7 +28,7 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 		if (reset) begin
 			SPISlaveState <= state_waiting;
 			receive_bit <= 16'b0;
-			idle_count <= 15'b0;
+			idle_count <= 16'b0;
 		end
 		else begin
 			case (SPISlaveState)
@@ -37,7 +37,8 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 						SPISlaveState <= state_receiving;
 						receive_bit <= 0;
 						clk_state <= 1'b0;
-						data_received = 1'b0;
+						data_received <= 1'b0;
+						//data_out <= 16'b0;
 					end
 
 				state_receiving:
@@ -58,9 +59,10 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 							SPISlaveState <= state_waiting;
 						idle_count <= idle_count + 1'b1;
 					end
+				
 				state_received:
 					if (spi_clock_in == 1'b0) begin
-						data_received = 1'b1;
+						data_received <= 1'b1;
 						SPISlaveState <= state_waiting;
 					end
 			endcase

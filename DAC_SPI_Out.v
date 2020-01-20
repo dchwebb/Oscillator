@@ -30,11 +30,11 @@ module DAC_SPI_Out (clock_in, reset, data_in, send, spi_cs_out, spi_clock_out, s
 
 	always @(posedge clock_in or posedge reset) begin
 		if (reset) begin
-			dac_state = dac_state_idle;
-			spi_cs_out = 1'b1;
-			spi_data_out = 1'b0;
-			spi_clock_out = 1'b1;
-			clock_counter = 1'b0;
+			dac_state <= dac_state_idle;
+			spi_cs_out <= 1'b1;
+			spi_data_out <= 1'b0;
+			spi_clock_out <= 1'b1;
+			clock_counter <= 1'b0;
 		end
 		else if (clock_counter == 0) begin		// only transition state on first clock counter - otherwise increment SPI clock
 			if (dac_state != dac_state_idle) begin
@@ -60,7 +60,7 @@ module DAC_SPI_Out (clock_in, reset, data_in, send, spi_cs_out, spi_clock_out, s
 				dac_state_sent:
 					begin
 						spi_cs_out <= 1'b1;
-						spi_data_out = 1'b0;
+						spi_data_out <= 1'b0;
 						dac_state <= dac_state_cs_pulse;
 						spi_clock_out <= 1;
 					end
