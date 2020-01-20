@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module TestBench;
+module TestBench_DAC;
 
 	wire spi_clock;
 	wire spi_data;
@@ -12,13 +12,13 @@ module TestBench;
 	wire fpga_clock;
 	OSCH #(.NOM_FREQ("133.00")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock));
 
-	DacSPI dac(.clock_in(fpga_clock), .reset(reset), .data_in(dac_data), .send(send), .spi_cs_out(spi_cs), .spi_clock_out(spi_clock), .spi_data_out(spi_data));
+	DAC_SPI_Out dac(.clock_in(fpga_clock), .reset(reset), .data_in(dac_data), .send(send), .spi_cs_out(spi_cs), .spi_clock_out(spi_clock), .spi_data_out(spi_data));
 
 	initial
 	begin
 		reset = 1'b1;
 		send = 1'b0;
-		dac_data = 24'b10110001_01010101_11001100;
+		dac_data = {8'b00110001, 16'b10101010_11001100};
 		#20
 		reset = 1'b0;
 		#20

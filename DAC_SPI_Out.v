@@ -1,4 +1,4 @@
-module DacSPI (clock_in, reset, data_in, send, spi_cs_out, spi_clock_out, spi_data_out);
+module DAC_SPI_Out (clock_in, reset, data_in, send, spi_cs_out, spi_clock_out, spi_data_out);
 	input wire clock_in;
 	input wire reset;
 	input wire [23:0] data_in;

@@ -37,11 +37,11 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock,
 	OSCH #(.NOM_FREQ("133.00")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
 
 	// Initialise ADC SPI input microcontroller
-	SPISlave dut(.clock(fpga_clock), .reset(rst), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));
+	ADC_SPI_In adc(.clock(fpga_clock), .reset(rst), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));
 
 
 	// initialise DAC SPI (Maxim5134)
-	DacSPI dac(.clock_in(fpga_clock), .reset(rst), .data_in(dac_data), .send(send), .spi_cs_out(dac_spi_cs), .spi_clock_out(dac_spi_clock), .spi_data_out(dac_spi_data));
+	DAC_SPI_Out dac(.clock_in(fpga_clock), .reset(rst), .data_in(dac_data), .send(send), .spi_cs_out(dac_spi_cs), .spi_clock_out(dac_spi_clock), .spi_data_out(dac_spi_data));
 
 	parameter SEND_CHANNEL_A = 8'b00110001;		// Write to DAC Channel A
 	initial begin

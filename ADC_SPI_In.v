@@ -1,9 +1,9 @@
-module SPISlave (clock, reset, spi_clock_in, spi_data_in, data_out, data_received);
+module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_received);
 	input wire clock;
 	input wire reset;
 	input wire spi_clock_in;
 	input wire spi_data_in;
-	output reg [15:0] data_out;
+	output reg [0:15] data_out;
 	output reg data_received;
 
 	reg [15:0] idle_count;
