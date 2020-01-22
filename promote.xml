@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<userSetting name="D:/docs/FPGA/Oscillator/promote.xml" version="Diamond (64-bit) 3.11.1.441" date="Sun Jan 19 20:56:51 2020" vendor="Lattice Semiconductor Corporation" >
+<userSetting name="D:/docs/FPGA/Oscillator/promote.xml" version="Diamond (64-bit) 3.11.1.441" date="Wed Jan 22 10:29:41 2020" vendor="Lattice Semiconductor Corporation" >
   <msg mid="35901010" type="Error" />
+  <msg mid="35909000" type="Info" />
   <msg mid="35901209" type="Warning" />
   <msg mid="35901220" type="Warning" />
 </userSetting>

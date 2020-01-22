@@ -10,7 +10,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock,
 	output wire dac_spi_cs;
 	output wire dac_spi_data;
 	output wire dac_spi_clock;
-	wire dac_sending;
+	//wire dac_sending;
 	reg [23:0] dac_data;
 	
 	// ADC settings
@@ -34,7 +34,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock,
 	parameter state_sent		= 2'b11;
 
 	wire fpga_clock;
-	OSCH #(.NOM_FREQ("133.00")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
+	OSCH #(.NOM_FREQ("88.67")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
 
 	// Initialise ADC SPI input microcontroller
 	ADC_SPI_In adc(.clock(fpga_clock), .reset(rst), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));

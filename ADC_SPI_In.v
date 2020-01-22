@@ -6,8 +6,8 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 	output reg [0:15] data_out;
 	output reg data_received;
 
-	reg [15:0] idle_count;
-	reg [3:0] receive_bit;
+	reg [11:0] idle_count;
+	reg [3:0] receive_bit = 1'b0;
 	reg clk_state;
 
 	parameter IDLETIME = 16'h1FF;
@@ -19,7 +19,7 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 
 	initial begin
 		SPISlaveState = state_waiting;
-		receive_bit = 16'b0;
+		//receive_bit = 16'b0;
 		idle_count = 15'b0;
 		data_received = 1'b0;
 	end
@@ -33,7 +33,7 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 		else begin
 			case (SPISlaveState)
 				state_waiting:
-					if (spi_clock_in) begin
+					if (spi_clock_in == 1'b1) begin
 						SPISlaveState <= state_receiving;
 						receive_bit <= 0;
 						clk_state <= 1'b0;
@@ -55,13 +55,19 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 						idle_count <= 15'b0;
 					end
 					else if(clk_state == spi_clock_in) begin						// Abort if SPI clock gets stuck in one state before transfer completed
+						// provisional error handling for noise on the line
+						if (clk_state == 1'b1 && idle_count == 3 && data_out[receive_bit - 1] != spi_data_in) begin
+							data_out[receive_bit - 1] <= spi_data_in;
+						end
+						else
 						if (idle_count > IDLETIME)
 							SPISlaveState <= state_waiting;
 						idle_count <= idle_count + 1'b1;
 					end
 				
 				state_received:
-					if (spi_clock_in == 1'b0) begin
+					//if (spi_clock_in == 1'b0)
+					begin
 						data_received <= 1'b1;
 						SPISlaveState <= state_waiting;
 					end

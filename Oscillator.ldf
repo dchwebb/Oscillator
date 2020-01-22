@@ -3,16 +3,28 @@
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="lse" default_strategy="Strategy1">
         <Options def_top="top" top="top"/>
-        <Source name="DacSPI.v" type="Verilog" type_short="Verilog">
-            <Options/>
-        </Source>
-        <Source name="TestBench.v" type="Verilog" type_short="Verilog" syn_sim="SimOnly">
-            <Options/>
-        </Source>
         <Source name="top.v" type="Verilog" type_short="Verilog">
             <Options top_module="top"/>
         </Source>
-        <Source name="SPISlave.v" type="Verilog" type_short="Verilog">
+        <Source name="ADC_SPI_In.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="DAC_SPI_Out.v" type="Verilog" type_short="Verilog">
+            <Options/>
+        </Source>
+        <Source name="TestBench_ADC.v" type="Verilog" type_short="Verilog" syn_sim="SimOnly">
+            <Options/>
+        </Source>
+        <Source name="TestBench_Top.v" type="Verilog" type_short="Verilog" syn_sim="SimOnly">
+            <Options/>
+        </Source>
+        <Source name="TestBench_DAC.v" type="Verilog" type_short="Verilog" syn_sim="SimOnly">
+            <Options/>
+        </Source>
+        <Source name="dw_analyzer.rva" type="Reveal Analyzer Project File" type_short="RVA">
+            <Options/>
+        </Source>
+        <Source name="dw_reveal.rvl" type="Reveal" type_short="Reveal">
             <Options/>
         </Source>
         <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">
