@@ -1,4 +1,4 @@
-rvl_alias "fpga_clock" "fpga_clock";
+RVL_ALIAS "fpga_clock" "fpga_clock"; 
 BLOCK RESETPATHS ;
 BLOCK ASYNCPATHS ;
 LOCATE COMP "rstn" SITE "B3" ;
@@ -13,4 +13,7 @@ LOCATE COMP "adc_spi_clock" SITE "A13" ;
 LOCATE COMP "adc_spi_data" SITE "F8" ;
 IOBUF PORT "adc_spi_clock" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
 IOBUF PORT "adc_spi_data" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
-BLOCK JTAGPATHS;
+BLOCK JTAGPATHS ;
+LOCATE COMP "adc_spi_nss" SITE "C12" ;
+IOBUF PORT "adc_spi_nss" IO_TYPE=LVCMOS33 PULLMODE=NONE ;
+VOLTAGE 3.300 V;

@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock, rstn);
+module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, adc_spi_clock, rstn);
 
 	input wire rstn;       // from SW1 pushbutton
 	wire rst;
@@ -14,6 +14,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock,
 	reg [23:0] dac_data;
 	
 	// ADC settings
+	input wire adc_spi_nss;
 	input wire adc_spi_clock;
 	input wire adc_spi_data;
 	wire [15:0] adc_data;
@@ -37,7 +38,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_data, adc_spi_clock,
 	OSCH #(.NOM_FREQ("88.67")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
 
 	// Initialise ADC SPI input microcontroller
-	ADC_SPI_In adc(.clock(fpga_clock), .reset(rst), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));
+	ADC_SPI_In adc(.reset(rst), .spi_nss(adc_spi_nss), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));
 
 
 	// initialise DAC SPI (Maxim5134)

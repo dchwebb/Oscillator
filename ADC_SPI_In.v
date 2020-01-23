@@ -1,16 +1,12 @@
-module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_received);
-	input wire clock;
+module ADC_SPI_In (reset, spi_nss, spi_clock_in, spi_data_in, data_out, data_received);
+
 	input wire reset;
+	input wire spi_nss;
 	input wire spi_clock_in;
 	input wire spi_data_in;
 	output reg [0:15] data_out;
 	output reg data_received;
-
-	reg [11:0] idle_count;
-	reg [3:0] receive_bit = 1'b0;
-	reg clk_state;
-
-	parameter IDLETIME = 16'h1FF;
+	reg [3:0] receive_bit;
 
 	reg [1:0] SPISlaveState;
 	parameter state_waiting = 2'b00;
@@ -19,56 +15,39 @@ module ADC_SPI_In (clock, reset, spi_clock_in, spi_data_in, data_out, data_recei
 
 	initial begin
 		SPISlaveState = state_waiting;
-		//receive_bit = 16'b0;
-		idle_count = 15'b0;
 		data_received = 1'b0;
 	end
 
-	always @(posedge clock or posedge reset) begin
-		if (reset) begin
+	always @(posedge spi_clock_in or posedge spi_nss or posedge reset) begin
+		if (spi_nss || reset) begin
 			SPISlaveState <= state_waiting;
-			receive_bit <= 16'b0;
-			idle_count <= 16'b0;
 		end
 		else begin
 			case (SPISlaveState)
 				state_waiting:
-					if (spi_clock_in == 1'b1) begin
+					begin
 						SPISlaveState <= state_receiving;
-						receive_bit <= 0;
-						clk_state <= 1'b0;
+						receive_bit <= 1'b1;
 						data_received <= 1'b0;
-						//data_out <= 16'b0;
+						$display("Received bit cleared in waiting %b", data_received);
+						data_out[0] <= spi_data_in;
 					end
 
 				state_receiving:
-					if (clk_state == 1'b0 && spi_clock_in == 1'b1) begin		// SPI clock transitioning low to high ie halfway through clock cycle
-						if (receive_bit == 15)
-							SPISlaveState <= state_received;
+					begin
 						data_out[receive_bit] <= spi_data_in;
 						receive_bit <= receive_bit + 1'b1;
-						clk_state <= 1'b1;
-						idle_count <= 15'b0;
-					end
-					else if (clk_state == 1'b1 && spi_clock_in == 1'b0) begin
-						clk_state <= 1'b0;
-						idle_count <= 15'b0;
-					end
-					else if(clk_state == spi_clock_in) begin						// Abort if SPI clock gets stuck in one state before transfer completed
-						// provisional error handling for noise on the line
-						if (clk_state == 1'b1 && idle_count == 3 && data_out[receive_bit - 1] != spi_data_in) begin
-							data_out[receive_bit - 1] <= spi_data_in;
+						if (receive_bit == 15) begin
+							SPISlaveState <= state_received;
+							data_received <= 1'b1;
+							$display("Received bit set in receiving %b", data_received);
 						end
-						else
-						if (idle_count > IDLETIME)
-							SPISlaveState <= state_waiting;
-						idle_count <= idle_count + 1'b1;
 					end
-				
+
 				state_received:
-					//if (spi_clock_in == 1'b0)
 					begin
 						data_received <= 1'b1;
+						$display("Received bit set %b", data_received);
 						SPISlaveState <= state_waiting;
 					end
 			endcase
