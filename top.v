@@ -23,7 +23,9 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	// Timing settings
 	reg [15:0] sample_pos;					
 	reg [15:0] sample_timer = 1'b0;
-	parameter SAMPLEINTERVAL = 15'd2015;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015
+	reg [15:0] frequency;
+	parameter SAMPLERATE = 16'd44000;
+	parameter SAMPLEINTERVAL = 16'd2015;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015
 	
 	// Sample settings
 	parameter SEND_CHANNEL_A = 8'b00110001;		// Write to DAC Channel A
@@ -46,17 +48,23 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 
 	always @(posedge fpga_clock or posedge rst) begin
 		if (rst) begin
-			sample_timer = 1'b0;
-			send = 1'b0;
+			sample_timer <= 1'b0;
+			send <= 1'b0;
+			sample_pos <= 1'b0;
 		end
 		else begin
 			// process incoming ADC data
 			if (adc_data_received) begin
-				dac_data <= {SEND_CHANNEL_A, adc_data};
+				//dac_data <= {SEND_CHANNEL_A, adc_data};
+				frequency <= adc_data;
 			end
+			
+			// increment sample position by frequency
+			dac_data <= {SEND_CHANNEL_A, sample_pos};
 			
 			// send DAC data out once sample timer reaches apporpriate count
 			if (sample_timer > SAMPLEINTERVAL) begin
+				sample_pos <= (sample_pos + frequency) % SAMPLERATE;
 				sample_timer <= 1'b0;
 				send <= 1'b1;
 			end
