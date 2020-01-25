@@ -1,11 +1,12 @@
 `timescale 1ns / 1ns
 
-module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, adc_spi_clock, rstn);
+module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, adc_spi_clock, rstn, err_out);
 
 	input wire rstn;       // from SW1 pushbutton
 	wire rst;
 	assign rst = ~rstn;
-
+	output reg err_out;
+	
 	// DAC settings
 	output wire dac_spi_cs;
 	output wire dac_spi_data;
@@ -56,17 +57,14 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 			sample_pos <= 1'b0;
 		end
 		else begin
-			// process incoming ADC data
-			//if (adc_data_received) begin
-				dac_data <= {SEND_CHANNEL_A, adc_data};
-				//frequency <= adc_data;
-			//end
-			
-			// increment sample position by frequency
+				
 			dac_data <= {SEND_CHANNEL_A, sample_pos};
 			
 			// send DAC data out once sample timer reaches apporpriate count
 			if (sample_timer > SAMPLEINTERVAL) begin
+				err_out <= (frequency > 1000);		// Output high voltage if frequency looks dodgy
+	
+				// increment sample position by frequency
 				sample_pos <= (sample_pos + frequency) % SAMPLERATE;
 				sample_timer <= 1'b0;
 				send <= 1'b1;
