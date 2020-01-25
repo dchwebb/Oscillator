@@ -45,7 +45,10 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 		send = 1'b0;
 	end
 
-
+	always @(posedge adc_data_received) begin
+		frequency <= adc_data;
+	end
+	
 	always @(posedge fpga_clock or posedge rst) begin
 		if (rst) begin
 			sample_timer <= 1'b0;
@@ -54,10 +57,10 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 		end
 		else begin
 			// process incoming ADC data
-			if (adc_data_received) begin
-				//dac_data <= {SEND_CHANNEL_A, adc_data};
-				frequency <= adc_data;
-			end
+			//if (adc_data_received) begin
+				dac_data <= {SEND_CHANNEL_A, adc_data};
+				//frequency <= adc_data;
+			//end
 			
 			// increment sample position by frequency
 			dac_data <= {SEND_CHANNEL_A, sample_pos};
