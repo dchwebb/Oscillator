@@ -21,6 +21,12 @@
         <Source name="TestBench_DAC.v" type="Verilog" type_short="Verilog" syn_sim="SimOnly">
             <Options/>
         </Source>
+        <Source name="SineLUT.ipx" type="IPX_Module" type_short="IPX">
+            <Options/>
+        </Source>
+        <Source name="SineLUT.v" type="Verilog" type_short="Verilog" excluded="TRUE">
+            <Options/>
+        </Source>
         <Source name="dw_analyzer.rva" type="Reveal Analyzer Project File" type_short="RVA">
             <Options/>
         </Source>

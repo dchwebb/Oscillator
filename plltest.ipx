@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<DiamondModule name="plltest" module="PLL" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2020 01 24 15:05:11.171" version="5.8" type="Module" synthesis="lse" source_format="Verilog">
-  <Package>
-		<File name="plltest.lpc" type="lpc" modified="2020 01 24 15:05:00.698"/>
-		<File name="plltest.v" type="top_level_verilog" modified="2020 01 24 15:05:00.782"/>
-		<File name="plltest_tmpl.v" type="template_verilog" modified="2020 01 24 15:05:00.788"/>
-  </Package>
-</DiamondModule>

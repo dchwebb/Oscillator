@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="SineLUT" module="ROM" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2020 01 27 10:53:21.933" version="5.4" type="Module" synthesis="lse" source_format="Verilog">
+  <Package>
+		<File name="" type="" modified="2020 01 27 10:53:21.933"/>
+		<File name="SineLUT.lpc" type="lpc" modified="2020 01 27 10:53:18.851"/>
+		<File name="SineLUT.v" type="top_level_verilog" modified="2020 01 27 10:53:18.899"/>
+		<File name="SineLUT_tmpl.v" type="template_verilog" modified="2020 01 27 10:53:18.952"/>
+		<File name="d:/docs/fpga/oscillator/sin_lut.mem" type="mem" modified="2020 01 27 10:51:56.000"/>
+		<File name="tb_SineLUT_tmpl.v" type="testbench_verilog" modified="2020 01 27 10:53:18.964"/>
+  </Package>
+</DiamondModule>

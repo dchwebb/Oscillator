@@ -1,6 +1,7 @@
 rvl_alias "fpga_clock" "fpga_clock";
 RVL_ALIAS "fpga_clock" "fpga_clock"; 
 RVL_ALIAS "fpga_clock" "fpga_clock"; 
+RVL_ALIAS "fpga_clock" "fpga_clock"; 
 BLOCK RESETPATHS ;
 BLOCK ASYNCPATHS ;
 LOCATE COMP "rstn" SITE "B3" ;

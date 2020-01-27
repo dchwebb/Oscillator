@@ -15,6 +15,8 @@ module TestBench_Top;
 	wire rstn;       // from SW1 pushbutton
 	assign rstn = ~reset;
 
+	GSR GSR_INST (.GSR(1'b1));
+	PUR PUR_INST (.PUR(1'b1));
 
 	wire fpga_clock;
 	OSCH #(.NOM_FREQ("133.00")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
@@ -80,8 +82,8 @@ module TestBench_Top;
 //		#10000
 		send_SPI(data_packet[1]);
 		#100000
-		//send_SPI(data_packet[2]);
-		//#100000
+		send_SPI(data_packet[2]);
+		#100000
 
 		$finish;
 	end
