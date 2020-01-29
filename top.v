@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, adc_spi_clock, rstn, err_out);
+module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, adc_spi_clock, rstn, crystal_osc, err_out);
 
 	input wire rstn;       // from SW1 pushbutton
 	wire rst;
@@ -27,19 +27,24 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	wire adc_data_received;
 
 	// Timing settings
+	input wire crystal_osc;
 	reg [15:0] sample_pos;
 	reg [15:0] sample_timer = 1'b0;
-	reg [15:0] frequency;
+	reg [15:0] frequency = 16'd100;;
 	parameter SAMPLERATE = 16'd44000;
-	parameter SAMPLEINTERVAL = 16'd2015;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015
+	parameter SAMPLEINTERVAL = 16'd1909;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015 OR 84MHz / 44kHz = 1909
 	//reg [9:0] lut_pos = 10'b0;
 
 	// Sample settings
 	parameter SEND_CHANNEL_A = 8'b00110001;		// Write to DAC Channel A
 
-	// Initialise fpga clock
+	//	Initialise 84MHz PLL clock from dev board 12 MHz crystal (dev board pin C8)
 	wire fpga_clock;
-	OSCH #(.NOM_FREQ("88.67")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
+	OscPll pll(.CLKI(crystal_osc), .CLKOP(fpga_clock));
+	
+	//Initialise fpga clock
+	//wire fpga_clock;
+	//OSCH #(.NOM_FREQ("88.67")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
 
 	// Initialise Sine LUT
 	SineLUT sin_lut (.Address(lut_addr), .OutClock(fpga_clock), .OutClockEn(lut_enable), .Reset(rst), .Q(lut_value));

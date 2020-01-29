@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="OscPll" module="PLL" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2020 01 29 17:02:18.266" version="5.8" type="Module" synthesis="lse" source_format="Verilog">
+  <Package>
+		<File name="OscPll.lpc" type="lpc" modified="2020 01 29 17:02:16.196"/>
+		<File name="OscPll.v" type="top_level_verilog" modified="2020 01 29 17:02:16.244"/>
+		<File name="OscPll_tmpl.v" type="template_verilog" modified="2020 01 29 17:02:16.248"/>
+  </Package>
+</DiamondModule>
