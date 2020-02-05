@@ -1,4 +1,4 @@
-module ADC_SPI_In (reset, clock, spi_nss, spi_clock_in, spi_data_in, data_out, data_received, debug_out);
+module ADC_SPI_In (reset, clock, spi_nss, spi_clock_in, spi_data_in, data_out, data_received);
 
 	input wire reset;
 	input wire clock;
@@ -9,8 +9,6 @@ module ADC_SPI_In (reset, clock, spi_nss, spi_clock_in, spi_data_in, data_out, d
 	output reg data_received;
 	reg [3:0] receive_bit;
 	
-	output reg debug_out;
-
 	reg [1:0] SPISlaveState;
 	parameter state_waiting = 2'b00;
 	parameter state_receiving = 2'b01;
@@ -26,7 +24,7 @@ module ADC_SPI_In (reset, clock, spi_nss, spi_clock_in, spi_data_in, data_out, d
 			clock_counter <= 1'b0;
 		end
 		else begin
-			clock_counter <= clock_counter + 1'b1;
+			clock_counter <= clock_counter + 1'b1;		// count negative spi clock duration to eliminate noise
 		end
 		
 		if (spi_nss != nss_stable) begin
@@ -45,13 +43,11 @@ module ADC_SPI_In (reset, clock, spi_nss, spi_clock_in, spi_data_in, data_out, d
 	always @(posedge spi_clock_in or posedge nss_stable or posedge reset) begin
 		if (nss_stable || reset) begin
 			SPISlaveState <= state_waiting;
-			debug_out <= 1'b0;
 		end
 		else if (clock_counter > 2) begin		//  check there have been at least two counts of negative pulse before recording a valid SPI clock cycle
 			case (SPISlaveState)
 				state_waiting:
 					begin
-						debug_out <= 1'b1;
 						SPISlaveState <= state_receiving;
 						receive_bit <= 1'b1;
 						data_received <= 1'b0;
@@ -60,7 +56,6 @@ module ADC_SPI_In (reset, clock, spi_nss, spi_clock_in, spi_data_in, data_out, d
 
 				state_receiving:
 					begin
-						//debug_out <= 1'b0;
 						data_out[receive_bit] <= spi_data_in;
 						receive_bit <= receive_bit + 1'b1;
 						if (receive_bit == 15) begin
