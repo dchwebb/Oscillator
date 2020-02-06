@@ -18,10 +18,10 @@ module TestBench_Top;
 	GSR GSR_INST (.GSR(1'b1));
 	PUR PUR_INST (.PUR(1'b1));
 
-	wire fpga_clock;
-	OSCH #(.NOM_FREQ("133.00")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
+	wire osc_clock;
+	OSCH #(.NOM_FREQ("12.09")) rc_oscillator(.STDBY(1'b0), .OSC(osc_clock), .SEDSTDBY());
 
-	top dut(.dac_spi_cs(spi_cs_out), .dac_spi_data(spi_data_out), .dac_spi_clock(spi_clock_out), .adc_spi_data(spi_data_in), .adc_spi_clock(spi_clock_in), .rstn(rstn));
+	top #(.SAMPLEINTERVAL(20)) dut(.dac_spi_cs(spi_cs_out), .dac_spi_data(spi_data_out), .dac_spi_clock(spi_clock_out), .adc_spi_data(spi_data_in), .adc_spi_clock(spi_clock_in), .rstn(rstn), .crystal_osc(osc_clock));
 
 	reg [15:0] data_packet [2:0];
 	integer i;
@@ -74,17 +74,18 @@ module TestBench_Top;
 		spi_data_in = 1'b0;
 		#20
 		reset = 1'b0;
-		#100
-
+//		#100
 
 
 		//send_badSPI(data_packet[0]);
 //		#10000
-		send_SPI(data_packet[1]);
-		#100000
-		send_SPI(data_packet[2]);
-		#100000
+		//send_SPI(data_packet[1]);
+//		#100000
+		//send_SPI(data_packet[2]);
+//		#100000
 
-		$finish;
+//		$finish;
+
 	end
+
 endmodule

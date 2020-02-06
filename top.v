@@ -5,10 +5,11 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	input wire rstn;       // from SW1 pushbutton
 	wire reset;
 	assign reset = ~rstn;
-	
+
 	// Debug settings
 	output reg err_out;
-	output wire debug_out;
+	output reg debug_out;
+	reg [31:0] debug_sample;
 
 	// SinLUT settings
 	reg [10:0] lut_addr = 11'b0;
@@ -29,11 +30,15 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	wire [15:0] adc_data;
 	wire adc_data_received;
 
+	// output settings
+	reg [31:0] output_sample;
+
 	// Timing settings
 	input wire crystal_osc;
 	reg [15:0] sample_pos;
+	reg [15:0] sample_pos2;
 	reg [15:0] sample_timer = 1'b0;
-	reg [15:0] frequency = 16'd220;
+	reg [15:0] frequency = 16'd2000;
 	parameter SAMPLERATE = 16'd44000;
 	parameter SAMPLEINTERVAL = 16'd1909;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015 OR 84MHz / 44kHz = 1909
 	//reg [9:0] lut_pos = 10'b0;
@@ -44,7 +49,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	//	Initialise 84MHz PLL clock from dev board 12 MHz crystal (dev board pin C8)
 	wire fpga_clock;
 	OscPll pll(.CLKI(crystal_osc), .CLKOP(fpga_clock));
-	
+
 	// Initialise fpga clock
 	//wire fpga_clock;
 	//OSCH #(.NOM_FREQ("88.67")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
@@ -68,6 +73,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 			sample_timer <= 1'b0;
 			dac_send <= 1'b0;
 			sample_pos <= 1'b0;
+			sample_pos2 <= 1'b0;
 			lut_addr <= 1'b0;
 		end
 		else begin
@@ -77,16 +83,27 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 				sample_pos <= (sample_pos + frequency) % SAMPLERATE;		// number of items in sine LUT is 1375 (32*1375=44000Hz) which means that we can divide by 32 to get correct position
 				lut_addr <= sample_pos >> 5;
 			end
-			else if (sample_timer == 1) begin
-				dac_data <= {SEND_CHANNEL_A, lut_value};
+			else if (sample_timer == 2) begin
+				output_sample <= lut_value >> 0;
 			end
-			
-			
-			
+			else if (sample_timer == 3) begin
+				// increment sample position by frequency
+				sample_pos2 <= (sample_pos2 + frequency + frequency) % SAMPLERATE;		// number of items in sine LUT is 1375 (32*1375=44000Hz) which means that we can divide by 32 to get correct position
+				lut_addr <= sample_pos2 >> 5;
 
-			// send DAC data out once sample timer reaches apporpriate count
+			end
+			else if (sample_timer == 5) begin
+				output_sample <= output_sample + (lut_value >> 0);
+			end
+
+
+
+
+			// send DAC data out once sample timer reaches appropriate count
 			if (sample_timer > SAMPLEINTERVAL) begin
-				
+				debug_sample <= output_sample;
+				dac_data <= {SEND_CHANNEL_A, output_sample[16:1]};		// effectively divide output sample by 2 to avoid overflow caused by adding multiple sine waves
+
 				sample_timer <= 1'b0;
 				dac_send <= 1'b1;
 			end
