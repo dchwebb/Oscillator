@@ -1,5 +1,3 @@
-`timescale 1ns / 1ns
-
 module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, adc_spi_clock, rstn, crystal_osc, err_out, debug_out);
 
 	input wire rstn;       // from SW1 pushbutton
@@ -12,16 +10,16 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	reg [31:0] debug_sample;
 
 	// SinLUT settings
-	reg [8:0] lut_addr = 9'b0;
+	reg [10:0] lut_addr = 11'b0;
 	wire lut_enable = 1'b1;
-	wire [15:0] lut_value;
+	wire signed [15:0] lut_value;
 
 	// Smaple position RAM
 	reg [9:0] sp_addr;
 	reg sp_write;
 	wire [15:0] sp_readdata;
 	reg [15:0] sp_writedata;
-	
+
 	// DAC settings
 	output wire dac_spi_cs;
 	output wire dac_spi_data;
@@ -37,7 +35,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	wire adc_data_received;
 
 	// output settings
-	reg [31:0] output_sample;
+	reg signed [31:0] output_sample;
 
 	// Timing settings
 	input wire crystal_osc;
@@ -45,7 +43,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	reg [15:0] sample_pos2;
 	reg [15:0] sample_timer = 1'b0;
 	reg [15:0] freq_increment;						// Sample position offset incrementing by n * freqency for each harmonic
-	reg [15:0] frequency = 16'd2000;
+	reg [15:0] frequency = 16'd1000;
 	parameter SAMPLERATE = 16'd48000;
 	parameter SAMPLEINTERVAL = 16'd1750;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015 OR 84MHz / 48kHz = 1750
 	parameter LUTSIZE = 1500;
@@ -58,17 +56,12 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	wire fpga_clock;
 	OscPll pll(.CLKI(crystal_osc), .CLKOP(fpga_clock));
 
-	// Initialise fpga clock
-	//wire fpga_clock;
-	//OSCH #(.NOM_FREQ("88.67")) rc_oscillator(.STDBY(1'b0), .OSC(fpga_clock), .SEDSTDBY());
-
 	// Initialise Sine LUT
-	//SineLUT sin_lut (.Address(lut_addr), .OutClock(fpga_clock), .OutClockEn(lut_enable), .Reset(reset), .Q(lut_value));
-	Sin_qlut sinlut (.Address(lut_addr), .OutClock(fpga_clock), .OutClockEn(lut_enable), .Reset(reset), .Q(lut_value));
+	SineLUT sin_lut (.Address(lut_addr), .OutClock(fpga_clock), .OutClockEn(lut_enable), .Reset(reset), .Q(lut_value));
 
 	// Initialise Sample Position RAM
 	Sample_Pos_RAM sample_pos_ram(.din(sp_writedata), .addr(sp_addr), .write_en(sp_write), .clk(fpga_clock), .dout(sp_readdata));
-	
+
 	// Initialise ADC SPI input microcontroller
 	ADC_SPI_In adc(.reset(reset), .clock(fpga_clock), .spi_nss(adc_spi_nss), .spi_clock_in(adc_spi_clock), .spi_data_in(adc_spi_data), .data_out(adc_data), .data_received(adc_data_received));
 
@@ -92,43 +85,34 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 
 			if (sample_timer == 0) begin
 				// increment sample position by frequency
-				sample_pos <= (sample_pos + frequency) % SAMPLERATE;		// number of items in sine LUT is 1375 (32*1500=48000Hz) which means that we can divide by 32 to get correct position
- 
-				if (sample_pos >= SAMPLERATE * 3 / 4)
-					lut_addr <= (SAMPLERATE - sample_pos) >> 5;
-				else if (sample_pos >= SAMPLERATE / 2)
-					lut_addr <= (sample_pos - SAMPLERATE / 2) >> 5;
-				else if (sample_pos >= SAMPLERATE / 4)
-					lut_addr <= (SAMPLERATE / 2 - sample_pos) >> 5;
-				else
-					lut_addr <= sample_pos >> 5;
+				sample_pos <= (sample_pos + frequency) % SAMPLERATE;		// number of items in sine LUT is 1500 (32*1500=48000Hz) which means that we can divide by 32 to get correct position
 			end
 			else if (sample_timer == 1) begin
+				lut_addr <= sample_pos >> 5;										// pass sine LUT to memory address to be read in two cycles
+				freq_increment <= (frequency << 1) % SAMPLERATE;		// set up next sample position offset
+
+				//	Write sample position to memory
+				sp_addr <= 1'b0;
 				sp_writedata <= sample_pos;
 				sp_write <= 1'b1;
-				sp_addr <= 1'b0;
-				freq_increment <= (frequency << 1) % SAMPLERATE;		// set up next sample position offset
-			end
-			else if (sample_timer == 2) begin
-				sp_write <= 1'b0;				
-				if (sample_pos >= SAMPLERATE / 2)
-					output_sample <= 16'h8000 - lut_value;
-				else
-					output_sample <= 16'h8000 + lut_value;
-
-				// increment sample position by frequency
-				sample_pos2 <= (sample_pos2 + freq_increment) % SAMPLERATE;		// number of items in sine LUT is 1375 (32*1375=44000Hz) which means that we can divide by 32 to get correct position
-					
-//				lut_addr <= sample_pos2 >> 5;
-				
 			end
 			else if (sample_timer == 3) begin
-				freq_increment <= (freq_increment + frequency) % SAMPLERATE;
+				sp_write <= 1'b0;
+				output_sample <= lut_value;
+
+				// increment sample position by frequency
+				sample_pos2 <= (sample_pos2 + freq_increment) % SAMPLERATE;
+				lut_addr <= sample_pos2 >> 5;
 			end
 			else if (sample_timer == 4) begin
-				//output_sample <= output_sample + lut_value;
+				freq_increment <= (freq_increment + frequency) % SAMPLERATE;
 			end
-
+			else if (sample_timer == 5) begin
+				output_sample <= output_sample + lut_value;
+			end
+			else if (sample_timer == SAMPLEINTERVAL) begin
+				output_sample <= output_sample + 16'hFFFF;
+			end
 
 
 
