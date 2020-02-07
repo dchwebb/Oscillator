@@ -15,10 +15,11 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	wire signed [15:0] lut_value;
 
 	// Smaple position RAM
-	reg [9:0] sp_addr;
+	reg [7:0] sp_addr;
 	reg sp_write;
 	wire [15:0] sp_readdata;
 	reg [15:0] sp_writedata;
+	reg [7:0] harmonic = 0;		// Number of harmonic being calculated
 
 	// DAC settings
 	output wire dac_spi_cs;
@@ -45,7 +46,7 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 	reg [15:0] freq_increment;						// Sample position offset incrementing by n * freqency for each harmonic
 	reg [15:0] frequency = 16'd1000;
 	parameter SAMPLERATE = 16'd48000;
-	parameter SAMPLEINTERVAL = 16'd1750;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015 OR 84MHz / 48kHz = 1750
+	parameter SAMPLEINTERVAL = 16'd1500;			// Clock frequency / sample rate - eg 88.67Mhz / 44khz = 2015 OR 72MHz / 48kHz = 1500
 	parameter LUTSIZE = 1500;
 	//reg [9:0] lut_pos = 10'b0;
 
@@ -85,39 +86,72 @@ module top(dac_spi_cs, dac_spi_data, dac_spi_clock, adc_spi_nss, adc_spi_data, a
 
 			if (sample_timer == 0) begin
 				// increment sample position by frequency
-				sample_pos <= (sample_pos + frequency) % SAMPLERATE;		// number of items in sine LUT is 1500 (32*1500=48000Hz) which means that we can divide by 32 to get correct position
-			end
-			else if (sample_timer == 1) begin
-				lut_addr <= sample_pos >> 5;										// pass sine LUT to memory address to be read in two cycles
-				freq_increment <= (frequency << 1) % SAMPLERATE;		// set up next sample position offset
-
-				//	Write sample position to memory
+				//sample_pos <= (sample_pos + frequency) % SAMPLERATE;		// number of items in sine LUT is 1500 (32*1500=48000Hz) which means that we can divide by 32 to get correct position
+				freq_increment <= frequency;
+				output_sample <= 16'hFFFF;											// Add extra 2^16 to cancel divide by two on final value
+				harmonic <= 8'b0;
 				sp_addr <= 1'b0;
-				sp_writedata <= sample_pos;
-				sp_write <= 1'b1;
+				sp_write <= 1'b0;
+			end
+			else if (sample_timer == 2) begin
+				// increment next sample position by frequency
+				sample_pos <= (sp_readdata + freq_increment) % SAMPLERATE;
+				sp_addr <= harmonic;
 			end
 			else if (sample_timer == 3) begin
-				sp_write <= 1'b0;
-				output_sample <= lut_value;
+				lut_addr <= sample_pos >> 5;										// pass sine LUT to memory address to be read in two cycles
 
-				// increment sample position by frequency
-				sample_pos2 <= (sample_pos2 + freq_increment) % SAMPLERATE;
-				lut_addr <= sample_pos2 >> 5;
+				//	Write sample position to memory
+				sp_writedata <= sample_pos;
+				sp_write <= 1'b1;
+
+				harmonic <= harmonic + 1'b1;
 			end
 			else if (sample_timer == 4) begin
-				freq_increment <= (freq_increment + frequency) % SAMPLERATE;
+				freq_increment <= freq_increment + frequency;			// set up next sample position offset
+
+				// Load up next sample position
+				sp_write <= 1'b0;
+				sp_addr <= harmonic;
 			end
 			else if (sample_timer == 5) begin
 				output_sample <= output_sample + lut_value;
 			end
-			else if (sample_timer == SAMPLEINTERVAL) begin
-				output_sample <= output_sample + 16'hFFFF;
+			else if (sample_timer == 6) begin
+				// increment next sample position by frequency
+
+				sample_pos <= (sp_readdata + freq_increment) % SAMPLERATE;
+				sp_addr <= harmonic;
+			end
+			else if (sample_timer == 7) begin
+				lut_addr <= sample_pos >> 5;
+				freq_increment <= freq_increment + frequency;
+
+				//	Write sample position to memory
+
+
+				sp_writedata <= sample_pos;
+				sp_write <= 1'b1;
+
+				harmonic <= harmonic + 1'b1;
+			end
+			else if (sample_timer == 8) begin
+				freq_increment <= freq_increment + frequency;			// set up next sample position offset
+
+				// Load up next sample position
+
+				sp_write <= 1'b0;
+				sp_addr <= harmonic;
+			end
+			else if (sample_timer == 9) begin
+				output_sample <= output_sample + lut_value;
 			end
 
 
 
+
 			// send DAC data out once sample timer reaches appropriate count
-			if (sample_timer > SAMPLEINTERVAL) begin
+			if (sample_timer == SAMPLEINTERVAL) begin
 				debug_sample <= output_sample;
 				dac_data <= {SEND_CHANNEL_A, output_sample[16:1]};		// effectively divide output sample by 2 to avoid overflow caused by adding multiple sine waves
 
