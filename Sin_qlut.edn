@@ -1,0 +1,476 @@
+(edif Sin_qlut
+  (edifVersion 2 0 0)
+  (edifLevel 0)
+  (keywordMap (keywordLevel 0))
+  (status
+    (written
+      (timestamp 2020 2 6 17 29 44)
+      (program "SCUBA" (version "Diamond (64-bit) 3.11.2.446"))))
+      (comment "C:\lscc\diamond\3.11_x64\ispfpga\bin\nt64\scuba.exe -w -n Sin_qlut -lang verilog -synth lse -bus_exp 7 -bb -arch xo3c00f -type bram -wp 00 -rp 1100 -addr_width 9 -data_width 16 -num_rows 375 -cascade -1 -memfile d:/docs/fpga/oscillator/sin_qlut1500.mem -memformat hex ")
+  (library ORCLIB
+    (edifLevel 0)
+    (technology
+      (numberDefinition))
+    (cell VHI
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port Z
+            (direction OUTPUT)))))
+    (cell VLO
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port Z
+            (direction OUTPUT)))))
+    (cell DP8KC
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port DIA8
+            (direction INPUT))
+          (port DIA7
+            (direction INPUT))
+          (port DIA6
+            (direction INPUT))
+          (port DIA5
+            (direction INPUT))
+          (port DIA4
+            (direction INPUT))
+          (port DIA3
+            (direction INPUT))
+          (port DIA2
+            (direction INPUT))
+          (port DIA1
+            (direction INPUT))
+          (port DIA0
+            (direction INPUT))
+          (port ADA12
+            (direction INPUT))
+          (port ADA11
+            (direction INPUT))
+          (port ADA10
+            (direction INPUT))
+          (port ADA9
+            (direction INPUT))
+          (port ADA8
+            (direction INPUT))
+          (port ADA7
+            (direction INPUT))
+          (port ADA6
+            (direction INPUT))
+          (port ADA5
+            (direction INPUT))
+          (port ADA4
+            (direction INPUT))
+          (port ADA3
+            (direction INPUT))
+          (port ADA2
+            (direction INPUT))
+          (port ADA1
+            (direction INPUT))
+          (port ADA0
+            (direction INPUT))
+          (port CEA
+            (direction INPUT))
+          (port OCEA
+            (direction INPUT))
+          (port CLKA
+            (direction INPUT))
+          (port WEA
+            (direction INPUT))
+          (port CSA2
+            (direction INPUT))
+          (port CSA1
+            (direction INPUT))
+          (port CSA0
+            (direction INPUT))
+          (port RSTA
+            (direction INPUT))
+          (port DIB8
+            (direction INPUT))
+          (port DIB7
+            (direction INPUT))
+          (port DIB6
+            (direction INPUT))
+          (port DIB5
+            (direction INPUT))
+          (port DIB4
+            (direction INPUT))
+          (port DIB3
+            (direction INPUT))
+          (port DIB2
+            (direction INPUT))
+          (port DIB1
+            (direction INPUT))
+          (port DIB0
+            (direction INPUT))
+          (port ADB12
+            (direction INPUT))
+          (port ADB11
+            (direction INPUT))
+          (port ADB10
+            (direction INPUT))
+          (port ADB9
+            (direction INPUT))
+          (port ADB8
+            (direction INPUT))
+          (port ADB7
+            (direction INPUT))
+          (port ADB6
+            (direction INPUT))
+          (port ADB5
+            (direction INPUT))
+          (port ADB4
+            (direction INPUT))
+          (port ADB3
+            (direction INPUT))
+          (port ADB2
+            (direction INPUT))
+          (port ADB1
+            (direction INPUT))
+          (port ADB0
+            (direction INPUT))
+          (port CEB
+            (direction INPUT))
+          (port OCEB
+            (direction INPUT))
+          (port CLKB
+            (direction INPUT))
+          (port WEB
+            (direction INPUT))
+          (port CSB2
+            (direction INPUT))
+          (port CSB1
+            (direction INPUT))
+          (port CSB0
+            (direction INPUT))
+          (port RSTB
+            (direction INPUT))
+          (port DOA8
+            (direction OUTPUT))
+          (port DOA7
+            (direction OUTPUT))
+          (port DOA6
+            (direction OUTPUT))
+          (port DOA5
+            (direction OUTPUT))
+          (port DOA4
+            (direction OUTPUT))
+          (port DOA3
+            (direction OUTPUT))
+          (port DOA2
+            (direction OUTPUT))
+          (port DOA1
+            (direction OUTPUT))
+          (port DOA0
+            (direction OUTPUT))
+          (port DOB8
+            (direction OUTPUT))
+          (port DOB7
+            (direction OUTPUT))
+          (port DOB6
+            (direction OUTPUT))
+          (port DOB5
+            (direction OUTPUT))
+          (port DOB4
+            (direction OUTPUT))
+          (port DOB3
+            (direction OUTPUT))
+          (port DOB2
+            (direction OUTPUT))
+          (port DOB1
+            (direction OUTPUT))
+          (port DOB0
+            (direction OUTPUT)))))
+    (cell Sin_qlut
+      (cellType GENERIC)
+      (view view1
+        (viewType NETLIST)
+        (interface
+          (port (array (rename Address "Address(8:0)") 9)
+            (direction INPUT))
+          (port OutClock
+            (direction INPUT))
+          (port OutClockEn
+            (direction INPUT))
+          (port Reset
+            (direction INPUT))
+          (port (array (rename Q "Q(15:0)") 16)
+            (direction OUTPUT)))
+        (property NGD_DRC_MASK (integer 1))
+        (contents
+          (instance scuba_vhi_inst
+            (viewRef view1 
+              (cellRef VHI)))
+          (instance scuba_vlo_inst
+            (viewRef view1 
+              (cellRef VLO)))
+          (instance Sin_qlut_0_0_0
+            (viewRef view1 
+              (cellRef DP8KC))
+            (property INIT_DATA
+              (string "STATIC"))
+            (property ASYNC_RESET_RELEASE
+              (string "SYNC"))
+            (property MEM_LPC_FILE
+              (string "Sin_qlut.lpc"))
+            (property MEM_INIT_FILE
+              (string "sin_qlut1500.mem"))
+            (property INITVAL_1F
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_1E
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_1D
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_1C
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_1B
+              (string "0x000000000000000000000003F07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3F"))
+            (property INITVAL_1A
+              (string "0x07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3F07E3E07C3E07C3E07C3E07C3E07C3E07C3E"))
+            (property INITVAL_19
+              (string "0x07C3E07C3E07A3D07A3D07A3D07A3D07A3D07A3D07A3D0783C0783C0783C0783C0783C0783B0763B"))
+            (property INITVAL_18
+              (string "0x0763B0763B0763B0763A0743A0743A0743A0743A0743907239072390723907238070380703807038"))
+            (property INITVAL_17
+              (string "0x0703706E3706E3706E3706E3606C3606C3606C3606A3506A3506A3506A3406834068340683306633"))
+            (property INITVAL_16
+              (string "0x066330663206432064320643106231062310623006030060300602F05E2F05E2F05E2E05C2E05C2E"))
+            (property INITVAL_15
+              (string "0x05A2D05A2D05A2C0582C0582C0582B0562B0562B0542A0542A054290522905229050280502804E27"))
+            (property INITVAL_14
+              (string "0x04E2704E2604C2604C2604A2504A2504824048240482304623046220442204422042210422104020"))
+            (property INITVAL_13
+              (string "0x040200401F03E1F03E1E03C1E03C1D03A1D03A1C0381C0381B0361B0361B0341A0341A0321903219"))
+            (property INITVAL_12
+              (string "0x030180301802E1702E1702C1602C1602A1502A150281402814026130261302412024110221102210"))
+            (property INITVAL_11
+              (string "0x020100200F01E0F01E0E01C0E01C0D01A0D01A0C0180C0160B0160B0140A0140A012090120901008"))
+            (property INITVAL_10
+              (string "0x0100800E0700E0600C0600C0500A0500A04008040080300603004020040200201002010000000000"))
+            (property INITVAL_0F
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_0E
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_0D
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_0C
+              (string "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"))
+            (property INITVAL_0B
+              (string "0x00000000000000000000001FF3FDFC3F5F83EBF13DBE83C5DC3ADCE38FBE36BAC34597319802E967"))
+            (property INITVAL_0A
+              (string "0x2B54B27B2E23D0E1FAEB1B2C61669F116760C24B0681D00BED3A9BB343862D74F267161F2DB1789D"))
+            (property INITVAL_09
+              (string "0x0FC5D07A1B3F5D7369912DB48246FD1AEB0110610700F3CBBB323652750D1C0B310A5704FF839197"))
+            (property INITVAL_08
+              (string "0x2CD34204CF13868069FF393932BB261DCB60FA44017D032D5B23EE314C69057EC35D6E25CEE15A6C"))
+            (property INITVAL_07
+              (string "0x055E834B6123AD91284F013C32F9341DAA40B6123917E266E813850007B62D31B1987D05BDE31B3C"))
+            (property INITVAL_06
+              (string "0x1D69908FF43434D1F2A409FFA3494D1EE9F091F032F3E1C88B061D52F51F18666013AC29CF012232"))
+            (property INITVAL_05
+              (string "0x3A773226B20A3F031D2C192660059F274D60E20B34B3F1B272015A3276D20D20032D2D184583DB81"))
+            (property INITVAL_04
+              (string "0x22AA907BD02C6F5110193573C19A5D3DB7D21A9C057B928ED50C7F02FB0912A2135B381864E3B363"))
+            (property INITVAL_03
+              (string "0x1DA76001882229A045AA262B9081C629AD30B3DF2C8E90DDF32EEFC1000330F0A11A103251412C18"))
+            (property INITVAL_02
+              (string "0x3351B1381D33D1E13E1F33F1E13C1D3391B1321832D141241031D0B11005304FF0F7F82E8F00D9E7"))
+            (property INITVAL_01
+              (string "0x2C6DE0B5D52A0CB08BC0274B505FA92469D02D90212833F9751DC673C1591A24A3853A1662B3471B"))
+            (property INITVAL_00
+              (string "0x1260B306FA0E5EA2C2D90A1C727EB605BA423692013801EE6E3CB5C1A64A3833715C253391311200"))
+            (property CSDECODE_B
+              (string "0b000"))
+            (property CSDECODE_A
+              (string "0b000"))
+            (property WRITEMODE_B
+              (string "NORMAL"))
+            (property WRITEMODE_A
+              (string "NORMAL"))
+            (property GSR
+              (string "ENABLED"))
+            (property RESETMODE
+              (string "ASYNC"))
+            (property REGMODE_B
+              (string "NOREG"))
+            (property REGMODE_A
+              (string "NOREG"))
+            (property DATA_WIDTH_B
+              (string "9"))
+            (property DATA_WIDTH_A
+              (string "9")))
+          (net scuba_vhi
+            (joined
+              (portRef Z (instanceRef scuba_vhi_inst))
+              (portRef ADB12 (instanceRef Sin_qlut_0_0_0))))
+          (net scuba_vlo
+            (joined
+              (portRef Z (instanceRef scuba_vlo_inst))
+              (portRef CSB2 (instanceRef Sin_qlut_0_0_0))
+              (portRef CSA2 (instanceRef Sin_qlut_0_0_0))
+              (portRef CSB1 (instanceRef Sin_qlut_0_0_0))
+              (portRef CSA1 (instanceRef Sin_qlut_0_0_0))
+              (portRef CSB0 (instanceRef Sin_qlut_0_0_0))
+              (portRef CSA0 (instanceRef Sin_qlut_0_0_0))
+              (portRef WEB (instanceRef Sin_qlut_0_0_0))
+              (portRef WEA (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA12 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADB2 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA2 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADB1 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA1 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADB0 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA0 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB8 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA8 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB7 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA7 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB6 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA6 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB5 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA5 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB4 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA4 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB3 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA3 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB2 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA2 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB1 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA1 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIB0 (instanceRef Sin_qlut_0_0_0))
+              (portRef DIA0 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout15
+            (joined
+              (portRef (member Q 0))
+              (portRef DOB6 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout14
+            (joined
+              (portRef (member Q 1))
+              (portRef DOB5 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout13
+            (joined
+              (portRef (member Q 2))
+              (portRef DOB4 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout12
+            (joined
+              (portRef (member Q 3))
+              (portRef DOB3 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout11
+            (joined
+              (portRef (member Q 4))
+              (portRef DOB2 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout10
+            (joined
+              (portRef (member Q 5))
+              (portRef DOB1 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout9
+            (joined
+              (portRef (member Q 6))
+              (portRef DOB0 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout8
+            (joined
+              (portRef (member Q 7))
+              (portRef DOA8 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout7
+            (joined
+              (portRef (member Q 8))
+              (portRef DOA7 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout6
+            (joined
+              (portRef (member Q 9))
+              (portRef DOA6 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout5
+            (joined
+              (portRef (member Q 10))
+              (portRef DOA5 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout4
+            (joined
+              (portRef (member Q 11))
+              (portRef DOA4 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout3
+            (joined
+              (portRef (member Q 12))
+              (portRef DOA3 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout2
+            (joined
+              (portRef (member Q 13))
+              (portRef DOA2 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout1
+            (joined
+              (portRef (member Q 14))
+              (portRef DOA1 (instanceRef Sin_qlut_0_0_0))))
+          (net dataout0
+            (joined
+              (portRef (member Q 15))
+              (portRef DOA0 (instanceRef Sin_qlut_0_0_0))))
+          (net Reset
+            (joined
+              (portRef Reset)
+              (portRef RSTB (instanceRef Sin_qlut_0_0_0))
+              (portRef RSTA (instanceRef Sin_qlut_0_0_0))))
+          (net RdClockEn
+            (joined
+              (portRef OutClockEn)
+              (portRef OCEB (instanceRef Sin_qlut_0_0_0))
+              (portRef CEB (instanceRef Sin_qlut_0_0_0))
+              (portRef OCEA (instanceRef Sin_qlut_0_0_0))
+              (portRef CEA (instanceRef Sin_qlut_0_0_0))))
+          (net rdclk
+            (joined
+              (portRef OutClock)
+              (portRef CLKB (instanceRef Sin_qlut_0_0_0))
+              (portRef CLKA (instanceRef Sin_qlut_0_0_0))))
+          (net raddr8
+            (joined
+              (portRef (member Address 0))
+              (portRef ADB11 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA11 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr7
+            (joined
+              (portRef (member Address 1))
+              (portRef ADB10 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA10 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr6
+            (joined
+              (portRef (member Address 2))
+              (portRef ADB9 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA9 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr5
+            (joined
+              (portRef (member Address 3))
+              (portRef ADB8 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA8 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr4
+            (joined
+              (portRef (member Address 4))
+              (portRef ADB7 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA7 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr3
+            (joined
+              (portRef (member Address 5))
+              (portRef ADB6 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA6 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr2
+            (joined
+              (portRef (member Address 6))
+              (portRef ADB5 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA5 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr1
+            (joined
+              (portRef (member Address 7))
+              (portRef ADB4 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA4 (instanceRef Sin_qlut_0_0_0))))
+          (net raddr0
+            (joined
+              (portRef (member Address 8))
+              (portRef ADB3 (instanceRef Sin_qlut_0_0_0))
+              (portRef ADA3 (instanceRef Sin_qlut_0_0_0))))))))
+  (design Sin_qlut
+    (cellRef Sin_qlut
+      (libraryRef ORCLIB)))
+)

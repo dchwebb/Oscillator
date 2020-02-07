@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiamondModule name="Sin_qlut" module="ROM" VendorName="Lattice Semiconductor Corporation" generator="IPexpress" date="2020 02 06 17:29:51.002" version="5.4" type="Module" synthesis="lse" source_format="Verilog">
+  <Package>
+		<File name="" type="" modified="2020 02 06 17:29:51.002"/>
+		<File name="Sin_qlut.lpc" type="lpc" modified="2020 02 06 17:29:44.487"/>
+		<File name="Sin_qlut.v" type="top_level_verilog" modified="2020 02 06 17:29:44.534"/>
+		<File name="Sin_qlut_tmpl.v" type="template_verilog" modified="2020 02 06 17:29:44.550"/>
+		<File name="d:/docs/fpga/oscillator/sin_qlut1500.mem" type="mem" modified="2020 02 06 17:25:08.431"/>
+		<File name="tb_Sin_qlut_tmpl.v" type="testbench_verilog" modified="2020 02 06 17:29:44.565"/>
+  </Package>
+</DiamondModule>
